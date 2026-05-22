@@ -48,6 +48,10 @@ class Edicion extends Model
     {
         return $this->belongsToMany(Grupo::class, 'edicion_grupo');
     }
+    public function cursos()
+    {
+        return $this->hasMany(Curso::class , 'edicion_id', 'id');
+    }
 
 }
 

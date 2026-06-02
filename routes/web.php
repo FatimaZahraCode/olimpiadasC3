@@ -15,6 +15,7 @@ use App\Http\Controllers\ResultadosOlimpiadasController;
 use App\Http\Controllers\Admin\ParticipanteController;
 use App\Http\Controllers\Admin\EdicionController;
 use App\Http\Controllers\Admin\ResultadoController;
+use App\Http\Controllers\Admin\CursoController;
 use App\Http\Controllers\SessionController;
 
 /*
@@ -29,11 +30,11 @@ use App\Http\Controllers\SessionController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $ediciones = \App\Models\Edicion::with('cursos')->orderBy('curso_escolar', 'desc')->get();
+    return view('welcome', compact('ediciones'));
 })->name('home');
 
 Route::post('/inscripcion', [InscripcionesController::class, 'store'])->name('inscripcion');
-
 Route::prefix('sessions')->group(function () {
     Route::post('setEdicion', [SessionController::class, 'setEdicion'])->name('sessions.setEdicion');
 });
@@ -63,6 +64,8 @@ Route::prefix('/dashboard')->middleware(['auth', 'verified'])->group(function ()
         Route::delete('files/{file}',  [EdicionFileController::class, 'destroy'])->name('files.destroy');
     });
 });
+
+Route::get('cursos', [CursoController::class, 'index'])->name('cursos.index');
 
 Route::get('/resultados_live',        [ResultadosOlimpiadasController::class, 'index'])->name('resultados_live.index');
 Route::get('/resultados_live/datos',  [ResultadosOlimpiadasController::class, 'datos'])->name('resultados_live.datos');

@@ -10,9 +10,9 @@ class Curso extends Model
     use HasFactory;
     protected $table = 'cursos';
     protected $fillable = [
-        'nombre',
-        'descripcion',
-        'codigo',
+        'moodle_id',
+        'curso_escolar',
+        'olimpiada_id',
         'edicion_id',
     ];
     protected $hidden = [

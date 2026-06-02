@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('cursos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->text('descripcion');
-            $table->string('codigo');
+            $table->integer('moodle_id');
+            $table->string('curso_escolar');
+            $table->integer('olimpiada_id');
             $table->foreignId('edicion_id')->constrained('ediciones')->onDelete('cascade');
             $table->timestamps();
         });

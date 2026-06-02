@@ -15,39 +15,27 @@ class CursosSeeder extends Seeder
         //\App\Models\Curso::factory(10)->create();
         \App\Models\Curso::truncate();
         foreach (self::$cursos as $curso) {
-            \App\Models\Curso::create([
-                'nombre' => $curso['nombre'],
-                'descripcion' => $curso['descripcion'],
-                'codigo' => $curso['codigo'],
-                'edicion_id' => $curso['edicion_id'],
-            ]);
+            $edicion = \App\Models\Edicion::where('curso_escolar', $curso['curso_escolar'])->first();
+            if (!$edicion) {
+                $this->command->error('No se encontró una edición para el curso escolar: ' . $curso['curso_escolar']);
+                continue; // Saltar este curso si no se encuentra la edición
+            } else {
+                \App\Models\Curso::create([
+                    'moodle_id' => $curso['moodle_id'] ?? null,
+                    'curso_escolar' => $curso['curso_escolar'] ?? null,
+                    'olimpiada_id' => $curso['olimpiada_id'] ?? null,
+                    'edicion_id' => $edicion->id ?? null,
+                ]);
+            }
         }
         $this->command->info('Cursos inicializados con datos!');
     }
     private static $cursos = array(
+        
+        array('moodle_id' => 7, 'curso_escolar' =>  '21/22', 'olimpiada_id' => 13),
+        array('moodle_id' => 9, 'curso_escolar' => '22/23', 'olimpiada_id' => 14),
+        array('moodle_id' => 10, 'curso_escolar' => '23/24', 'olimpiada_id' => 15),
+        array('moodle_id' => 13, 'curso_escolar' => '24/25', 'olimpiada_id' => 16),
 
-        // =========================
-        // EDICIÓN 1 (21/22)
-        // =========================
-        array('nombre' => 'Hardware', 'descripcion' => 'Componentes físicos del ordenador', 'codigo' => 'HW', 'edicion_id' => 1),
-        array('nombre' => 'Sistemas Informáticos', 'descripcion' => 'Sistemas operativos y administración básica', 'codigo' => 'SI', 'edicion_id' => 1),
-
-        // =========================
-        // EDICIÓN 2 (22/23)
-        // =========================
-        array('nombre' => 'Redes', 'descripcion' => 'Configuración de redes locales', 'codigo' => 'RED', 'edicion_id' => 2),
-        array('nombre' => 'Ofimática', 'descripcion' => 'Herramientas de productividad', 'codigo' => 'OFI', 'edicion_id' => 2),
-
-        // =========================
-        // EDICIÓN 3 (23/24)
-        // =========================
-        array('nombre' => 'Programación', 'descripcion' => 'Resolución de problemas mediante código', 'codigo' => 'PRO', 'edicion_id' => 3),
-        array('nombre' => 'Bases de Datos', 'descripcion' => 'Modelado y consultas SQL', 'codigo' => 'BDD', 'edicion_id' => 3),
-
-        // =========================
-        // EDICIÓN 4 (24/25)
-        // =========================
-        array('nombre' => 'Lenguajes de Marcas', 'descripcion' => 'HTML, XML y estructuras de datos', 'codigo' => 'LM', 'edicion_id' => 4),
-        array('nombre' => 'Sistemas Informáticos Avanzados', 'descripcion' => 'Administración avanzada de sistemas', 'codigo' => 'SIA', 'edicion_id' => 4),
     );
 }

@@ -50,7 +50,7 @@ class Edicion extends Model
     }
     public function cursos()
     {
-        return $this->hasMany(Curso::class , 'edicion_id', 'id');
+        return $this->hasOne(Curso::class , 'edicion_id', 'id');
     }
 
 }

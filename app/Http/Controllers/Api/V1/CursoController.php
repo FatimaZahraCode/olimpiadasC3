@@ -3,49 +3,65 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CursoResource;
 use App\Models\Curso;
 use Illuminate\Http\Request;
 
 class CursoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $cursos = Curso::with('edicion')->get();
-        return $cursos;
+        $query = Curso::query();
+        if ($query) {
+            $query->orWhere('nombre', 'like', '%' . $request->q . '%');
+        }
+
+        return CursoResource::collection(
+            Curso::orderBy($request->_sort ?? 'id', $request->_order ?? 'asc')
+                ->paginate($request->perPage)
+        );
     }
 
-    public function show($id)
+    public function show(Curso $id)
     {
-        $curso = Curso::with('edicion')->find($id);
-        if (!$curso) {
+        $curso=Curso::with('edicion')->find($id);
+         if (!$curso) {
             return response()->json(['message' => 'Curso no encontrado'], 404);
         }
-        return response()->json($curso);
+        return new CursoResource($curso->id);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $parent_id)
     {
-        $curso = Curso::create($request->all());
-        return response()->json($curso, 201);
+        $cursoData = json_decode($request->getContent(), true);
+
+        $cursoData['edicion_id'] = $parent_id;
+
+        $curso = Curso::create($cursoData);
+
+        return new CursoResource($curso);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Curso $id)
     {
-        $curso = Curso::with('edicion')->find($id);
-        if (!$curso) {
+         $cursoData = json_decode($request->getContent(), true);
+        if (!$id) {
             return response()->json(['message' => 'Curso no encontrado'], 404);
         }
-        $curso->update($request->all());
-        return response()->json($curso);
+        $id->update($cursoData);
+        return new CursoResource($id);
     }
 
     public function destroy($id)
     {
         $curso = Curso::with('edicion')->find($id);
-        if (!$curso) {
-            return response()->json(['message' => 'Curso no encontrado'], 404);
+        try {
+            $curso->delete();
+            return response()->json(['message' => 'Curso eliminado'], 204);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error: ' . $e->getMessage()
+            ], 400);
         }
-        $curso->delete();
-        return response()->json(['message' => 'Curso eliminado']);
     }
 }

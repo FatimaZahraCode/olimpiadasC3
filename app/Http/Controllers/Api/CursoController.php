@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CursoResource;
 use App\Models\Curso;
+use App\Models\Edicion;
 use Illuminate\Http\Request;
 
 class CursoController extends Controller
@@ -13,7 +14,7 @@ class CursoController extends Controller
     {
         $query = Curso::query();
         if ($query) {
-            $query->orWhere('nombre', 'like', '%' . $request->q . '%');
+            $query->orWhere('curso_escolar', 'like', '%' . $request->q . '%');
         }
 
         return CursoResource::collection(
@@ -24,14 +25,14 @@ class CursoController extends Controller
 
     public function show(Curso $id)
     {
-        $curso=Curso::with('edicion')->find($id);
+        $curso=Curso::with('ediciones')->find($id);
          if (!$curso) {
             return response()->json(['message' => 'Curso no encontrado'], 404);
         }
         return new CursoResource($curso->id);
     }
 
-    public function store(Request $request, $parent_id)
+    public function store(Request $request, Edicion $parent_id)
     {
         $cursoData = json_decode($request->getContent(), true);
 

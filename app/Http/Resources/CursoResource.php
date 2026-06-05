@@ -18,9 +18,9 @@ class CursoResource extends JsonResource
         //return parent::toArray($request);
         return [
             'id' => $this->id,
-            'nombre' => $this->nombre,
-            'descripcion' => $this->descripcion,
-            'codigo' => $this->codigo,
+            'moodle_id' => $this->moodle_id,
+            'curso_escolar' => $this->curso_escolar,
+            'olimpiada_id' => $this->olimpiada_id,
             'edicion' => new EdicionResource(Edicion::find($this->edicion_id)),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

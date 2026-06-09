@@ -22,7 +22,7 @@ return new class extends Migration
             $table->dateTime('MomentoConsecucion')->nullable();
             $table->bigInteger('penalizaciones')->default(0);
             $table->dateTime('TiempoFinal')->nullable();
-            $table->bigInteger('id_prueba')->default(0);
+            $table->bigInteger('id_prueba')->default(0)->foreign('id_prueba')->references('id')->on('pruebas')->onDelete('cascade');
             $table->string('nombrePrueba',255)->nullable();
             $table->timestamps();
         });

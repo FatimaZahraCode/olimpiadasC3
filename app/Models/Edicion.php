@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Edicion extends Model
 {
@@ -51,6 +52,10 @@ class Edicion extends Model
     public function cursos()
     {
         return $this->hasOne(Curso::class , 'edicion_id', 'id');
+    }
+    public function categriasEdiciones(){
+
+        return $this->belongsToMany(Edicion::class,'categorias_ediciones')->wherePivot('num_convocatoria');
     }
 
 }
